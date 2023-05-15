@@ -5,17 +5,30 @@ import { useEffect, useState } from "react";
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const getData = () => {
-    axios.get("https://northwind.vercel.app/api/orders").then((res) => {
-      setOrders(res.data);
-      setLoading(false);
-    });
-  };
+  const [filters, setFilters] = useState([]);
 
   useEffect(() => {
     getData();
   }, []);
+
+  const getData = async () => {
+    await axios.get("https://northwind.vercel.app/api/orders").then((res) => {
+      setOrders(res.data);
+      setLoading(false);
+      updateFiltereData(res.data);
+    });
+  };
+
+  const updateFiltereData = (data) => {
+    const uniqueIds = [...new Set(data.map((order) => order.customerId))];
+
+    const filterOptions = uniqueIds.map((id) => ({
+      text: id,
+      value: id,
+    }));
+
+    setFilters(filterOptions);
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -76,6 +89,8 @@ function Orders() {
       title: "Customer Id",
       dataIndex: "customerId",
       key: "customerId",
+      filters,
+      onFilter: (value, record) => record.customerId === value,
     },
     {
       title: "Freight",
