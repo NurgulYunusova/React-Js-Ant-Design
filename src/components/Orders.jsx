@@ -15,11 +15,11 @@ function Orders() {
     await axios.get("https://northwind.vercel.app/api/orders").then((res) => {
       setOrders(res.data);
       setLoading(false);
-      updateFiltereData(res.data);
+      updateFilteredData(res.data);
     });
   };
 
-  const updateFiltereData = (data) => {
+  const updateFilteredData = (data) => {
     const uniqueIds = [...new Set(data.map((order) => order.customerId))];
 
     const filterOptions = uniqueIds.map((id) => ({
